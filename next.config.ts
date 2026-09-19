@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  turbopack: {
+    root: __dirname, // Menegaskan bahwa root proyek ada di folder ini
+  },
 };
 
-export default nextConfig;
+export default function config() {
+  return nextConfig;
+}
