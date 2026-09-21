@@ -9,16 +9,9 @@ interface Siswa {
 
 interface Suggestion {
   etude_teknik_judul?: string;
-  opus?: string;
-  komponis?: string;
   etude_melodi_judul?: string;
-  opus_1?: string;
-  komponis_1?: string;
   polifonik_judul?: string;
-  komponis_2?: string;
   sonatina_sonata_judul?: string;
-  opus_2?: string;
-  komponis_3?: string;
 }
 
 interface FormJurnalProps {
@@ -55,16 +48,10 @@ interface FormJurnalProps {
   setPolifonikStatus: (val: string) => void;
   sonata: string;
   setSonata: (val: string) => void;
-  sonataKomponis: string;
-  setSonataKomponis: (val: string) => void;
-  sonataMov: string;
-  setSonataMov: (val: string) => void;
   sonataStatus: string;
   setSonataStatus: (val: string) => void;
   piecesJudul: string;
   setPiecesJudul: (val: string) => void;
-  piecesKomponis: string;
-  setPiecesKomponis: (val: string) => void;
   piecesStatus: string;
   setPiecesStatus: (val: string) => void;
   submitting: boolean;
@@ -105,16 +92,10 @@ export default function FormJurnal({
   setPolifonikStatus,
   sonata,
   setSonata,
-  sonataKomponis,
-  setSonataKomponis,
-  sonataMov,
-  setSonataMov,
   sonataStatus,
   setSonataStatus,
   piecesJudul,
   setPiecesJudul,
-  piecesKomponis,
-  setPiecesKomponis,
   piecesStatus,
   setPiecesStatus,
   submitting,
@@ -123,10 +104,13 @@ export default function FormJurnal({
   return (
     <form onSubmit={handleSubmitJurnal} className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200">
-        <h2 className="text-xl font-semibold tracking-tight text-slate-900 flex items-center space-x-2.5">
-          <BookOpen className="w-5 h-5 text-indigo-600" />
-          <span>Jurnal Materi & Repertoire Piano</span>
-        </h2>
+        <div>
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 flex items-center space-x-2.5">
+            <BookOpen className="w-5 h-5 text-indigo-600" />
+            <span>Jurnal Materi & Repertoire Per Siswa</span>
+          </h2>
+          <p className="text-xs text-slate-500 mt-1 font-medium">Catat perkembangan materi praktik piano secara spesifik per siswa.</p>
+        </div>
         <div className="flex items-center space-x-3">
           <div>
             <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-700 mb-1">Tanggal</label>
@@ -186,7 +170,7 @@ export default function FormJurnal({
         </div>
       </div>
 
-      {/* Bagian Input Sub-Materi dengan Datalist dari Supabase */}
+      {/* Bagian Input Sub-Materi */}
       <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200 space-y-3">
         <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">1. Tangga Nada (Scale / Arpeggio)</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -218,10 +202,6 @@ export default function FormJurnal({
             placeholder="Buku teknik (Cth: Czerny Op. 599)"
             className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 px-3.5 py-2.5 text-xs font-medium placeholder:text-slate-500 shadow-2xs outline-none transition"
           />
-          <datalist id="listEtudeTeknik">
-            {suggestionList.map((item, idx) => item.etude_teknik_judul ? <option key={idx} value={item.etude_teknik_judul} /> : null)}
-          </datalist>
-
           <input
             type="text"
             value={etudeTeknikNo}
@@ -250,10 +230,6 @@ export default function FormJurnal({
             placeholder="Buku melodi..."
             className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 px-3.5 py-2.5 text-xs font-medium placeholder:text-slate-500 shadow-2xs outline-none transition"
           />
-          <datalist id="listEtudeMelodi">
-            {suggestionList.map((item, idx) => item.etude_melodi_judul ? <option key={idx} value={item.etude_melodi_judul} /> : null)}
-          </datalist>
-
           <input
             type="text"
             value={etudeMelodiNo}
@@ -282,10 +258,6 @@ export default function FormJurnal({
             placeholder="Repertoire polifonik..."
             className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 px-3.5 py-2.5 text-xs font-medium placeholder:text-slate-500 shadow-2xs outline-none transition"
           />
-          <datalist id="listPolifonik">
-            {suggestionList.map((item, idx) => item.polifonik_judul ? <option key={idx} value={item.polifonik_judul} /> : null)}
-          </datalist>
-
           <input
             type="text"
             value={polifonikNo}
@@ -305,31 +277,13 @@ export default function FormJurnal({
 
       <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200 space-y-3">
         <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">5. Sonatina / Sonata</h3>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <input
             type="text"
             list="listSonata"
             value={sonata}
             onChange={(e) => setSonata(e.target.value)}
             placeholder="Sonata..."
-            className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 px-3.5 py-2.5 text-xs font-medium placeholder:text-slate-500 shadow-2xs outline-none transition"
-          />
-          <datalist id="listSonata">
-            {suggestionList.map((item, idx) => item.sonatina_sonata_judul ? <option key={idx} value={item.sonatina_sonata_judul} /> : null)}
-          </datalist>
-
-          <input
-            type="text"
-            value={sonataKomponis}
-            onChange={(e) => setSonataKomponis(e.target.value)}
-            placeholder="Komponis"
-            className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 px-3.5 py-2.5 text-xs font-medium placeholder:text-slate-500 shadow-2xs outline-none transition"
-          />
-          <input
-            type="text"
-            value={sonataMov}
-            onChange={(e) => setSonataMov(e.target.value)}
-            placeholder="Movement"
             className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 px-3.5 py-2.5 text-xs font-medium placeholder:text-slate-500 shadow-2xs outline-none transition"
           />
           <input
@@ -344,19 +298,12 @@ export default function FormJurnal({
 
       <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200 space-y-3">
         <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">6. Repertoire / Pieces Bebas</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <input
             type="text"
             value={piecesJudul}
             onChange={(e) => setPiecesJudul(e.target.value)}
-            placeholder="Judul Lagu"
-            className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 px-3.5 py-2.5 text-xs font-medium placeholder:text-slate-500 shadow-2xs outline-none transition"
-          />
-          <input
-            type="text"
-            value={piecesKomponis}
-            onChange={(e) => setPiecesKomponis(e.target.value)}
-            placeholder="Komponis"
+            placeholder="Judul Pieces"
             className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 px-3.5 py-2.5 text-xs font-medium placeholder:text-slate-500 shadow-2xs outline-none transition"
           />
           <input
@@ -369,13 +316,26 @@ export default function FormJurnal({
         </div>
       </div>
 
+      <datalist id="listEtudeTeknik">
+        {suggestionList.map((item, idx) => item.etude_teknik_judul ? <option key={idx} value={item.etude_teknik_judul} /> : null)}
+      </datalist>
+      <datalist id="listEtudeMelodi">
+        {suggestionList.map((item, idx) => item.etude_melodi_judul ? <option key={idx} value={item.etude_melodi_judul} /> : null)}
+      </datalist>
+      <datalist id="listPolifonik">
+        {suggestionList.map((item, idx) => item.polifonik_judul ? <option key={idx} value={item.polifonik_judul} /> : null)}
+      </datalist>
+      <datalist id="listSonata">
+        {suggestionList.map((item, idx) => item.sonatina_sonata_judul ? <option key={idx} value={item.sonatina_sonata_judul} /> : null)}
+      </datalist>
+
       <button
         type="submit"
-        disabled={submitting || filteredSiswaByKelasJurnal.length === 0}
+        disabled={submitting || !selectedSiswaJurnal}
         className="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white font-semibold py-3.5 px-4 rounded-xl transition flex items-center justify-center space-x-2 shadow-sm shadow-indigo-600/20 disabled:opacity-50"
       >
         {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-        <span>Simpan Jurnal Mengajar</span>
+        <span>Simpan Jurnal Mengajar Siswa</span>
       </button>
     </form>
   );

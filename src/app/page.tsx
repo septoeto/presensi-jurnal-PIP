@@ -20,16 +20,9 @@ interface Siswa {
 
 interface Suggestion {
   etude_teknik_judul?: string;
-  opus?: string;
-  komponis?: string;
   etude_melodi_judul?: string;
-  opus_1?: string;
-  komponis_1?: string;
   polifonik_judul?: string;
-  komponis_2?: string;
   sonatina_sonata_judul?: string;
-  opus_2?: string;
-  komponis_3?: string;
 }
 
 interface GuruData {
@@ -95,6 +88,25 @@ export default function Home() {
   const [selectedKelasPresensi, setSelectedKelasPresensi] = useState("Semua");
   const [presensiData, setPresensiData] = useState<PresensiItem[]>([]);
 
+  // Jurnal Per Siswa State
+  const [selectedKelasJurnal, setSelectedKelasJurnal] = useState("");
+  const [selectedSiswaJurnal, setSelectedSiswaJurnal] = useState<Siswa | null>(null);
+  const [tangganada, setTangganada] = useState("");
+  const [tangganadaStatus, setTangganadaStatus] = useState("");
+  const [etudeTeknik, setEtudeTeknik] = useState("");
+  const [etudeTeknikNo, setEtudeTeknikNo] = useState("");
+  const [etudeTeknikStatus, setEtudeTeknikStatus] = useState("");
+  const [etudeMelodi, setEtudeMelodi] = useState("");
+  const [etudeMelodiNo, setEtudeMelodiNo] = useState("");
+  const [etudeMelodiStatus, setEtudeMelodiStatus] = useState("");
+  const [polifonik, setPolifonik] = useState("");
+  const [polifonikNo, setPolifonikNo] = useState("");
+  const [polifonikStatus, setPolifonikStatus] = useState("");
+  const [sonata, setSonata] = useState("");
+  const [sonataStatus, setSonataStatus] = useState("");
+  const [piecesJudul, setPiecesJudul] = useState("");
+  const [piecesStatus, setPiecesStatus] = useState("");
+
   // Rekap Presensi State & Filter Waktu
   const [rekapList, setRekapList] = useState<RekapPresensiRow[]>([]);
   const [selectedKelasRekap, setSelectedKelasRekap] = useState("Semua");
@@ -110,28 +122,6 @@ export default function Home() {
     return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
   });
   const [loadingRekap, setLoadingRekap] = useState(false);
-
-  // Jurnal State
-  const [selectedKelasJurnal, setSelectedKelasJurnal] = useState("");
-  const [selectedSiswaJurnal, setSelectedSiswaJurnal] = useState<Siswa | null>(null);
-  const [tangganada, setTangganada] = useState("");
-  const [tangganadaStatus, setTangganadaStatus] = useState("");
-  const [etudeTeknik, setEtudeTeknik] = useState("");
-  const [etudeTeknikNo, setEtudeTeknikNo] = useState("");
-  const [etudeTeknikStatus, setEtudeTeknikStatus] = useState("");
-  const [etudeMelodi, setEtudeMelodi] = useState("");
-  const [etudeMelodiNo, setEtudeMelodiNo] = useState("");
-  const [etudeMelodiStatus, setEtudeMelodiStatus] = useState("");
-  const [polifonik, setPolifonik] = useState("");
-  const [polifonikNo, setPolifonikNo] = useState("");
-  const [polifonikStatus, setPolifonikStatus] = useState("");
-  const [sonata, setSonata] = useState("");
-  const [sonataKomponis, setSonataKomponis] = useState("");
-  const [sonataMov, setSonataMov] = useState("");
-  const [sonataStatus, setSonataStatus] = useState("");
-  const [piecesJudul, setPiecesJudul] = useState("");
-  const [piecesKomponis, setPiecesKomponis] = useState("");
-  const [piecesStatus, setPiecesStatus] = useState("");
 
   useEffect(() => {
     const savedGuru = localStorage.getItem("currentGuru");
@@ -223,6 +213,24 @@ export default function Home() {
     return s.kelas?.trim() === selectedKelasPresensi;
   });
 
+  const filteredSiswaByKelasJurnal = guruSiswaList.filter(
+    (s) => s.kelas?.trim() === selectedKelasJurnal
+  );
+
+  useEffect(() => {
+    if (availableKelas.length > 0 && !selectedKelasJurnal) {
+      setSelectedKelasJurnal(availableKelas[0]);
+    }
+  }, [availableKelas]);
+
+  useEffect(() => {
+    if (filteredSiswaByKelasJurnal.length > 0) {
+      setSelectedSiswaJurnal(filteredSiswaByKelasJurnal[0]);
+    } else {
+      setSelectedSiswaJurnal(null);
+    }
+  }, [selectedKelasJurnal, currentGuru]);
+
   const getWeekNumber = (dateString: string) => {
     const d = new Date(dateString);
     if (isNaN(d.getTime())) return "";
@@ -260,26 +268,6 @@ export default function Home() {
       setPresensiData([]);
     }
   }, [selectedKelasPresensi, currentGuru, siswaList]);
-
-  useEffect(() => {
-    if (availableKelas.length > 0) {
-      setSelectedKelasJurnal(availableKelas[0]);
-    } else {
-      setSelectedKelasJurnal("");
-    }
-  }, [currentGuru, siswaList]);
-
-  const filteredSiswaByKelasJurnal = guruSiswaList.filter(
-    (s) => s.kelas?.trim() === selectedKelasJurnal
-  );
-
-  useEffect(() => {
-    if (filteredSiswaByKelasJurnal.length > 0) {
-      setSelectedSiswaJurnal(filteredSiswaByKelasJurnal[0]);
-    } else {
-      setSelectedSiswaJurnal(null);
-    }
-  }, [selectedKelasJurnal, currentGuru]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -384,31 +372,45 @@ export default function Home() {
       nama_siswa: selectedSiswaJurnal.nama_siswa,
       instrument: selectedSiswaJurnal.instrument,
       guru: currentGuru,
-      tangganada,
-      tangganada_status: tangganadaStatus,
-      etude_teknik: etudeTeknik,
-      etude_teknik_no: etudeTeknikNo,
-      etude_teknik_status: etudeTeknikStatus,
-      etude_melodi: etudeMelodi,
-      etude_melodi_no: etudeMelodiNo,
-      etude_melodi_status: etudeMelodiStatus,
-      polifonik,
-      polifonik_no: polifonikNo,
-      polifonik_status: polifonikStatus,
-      sonata,
-      sonata_komponis: sonataKomponis,
-      sonata_mov: sonataMov,
-      sonata_status: sonataStatus,
-      pieces_judul: piecesJudul,
-      pieces_komponis: piecesKomponis,
-      pieces_status: piecesStatus
+      tangganada: tangganada || "-",
+      tangganada_status: tangganadaStatus || "-",
+      etude_teknik: etudeTeknik || "-",
+      etude_teknik_no: etudeTeknikNo || "-",
+      etude_teknik_status: etudeTeknikStatus || "-",
+      etude_melodi: etudeMelodi || "-",
+      etude_melodi_no: etudeMelodiNo || "-",
+      etude_melodi_status: etudeMelodiStatus || "-",
+      polifonik: polifonik || "-",
+      polifonik_no: polifonikNo || "-",
+      polifonik_status: polifonikStatus || "-",
+      sonata: sonata || "-",
+      sonata_status: sonataStatus || "-",
+      pieces_judul: piecesJudul || "-",
+      pieces_status: piecesStatus || "-"
     };
 
     try {
       const { error } = await supabase.from("jurnal").insert([payload]);
       if (error) throw error;
 
-      showToast("Jurnal Mengajar berhasil disimpan ke Supabase!");
+      showToast("Jurnal Mengajar siswa berhasil disimpan!");
+
+      // Auto-refresh / kosongkan kembali isian form jurnal setelah berhasil disimpan
+      setTangganada("");
+      setTangganadaStatus("");
+      setEtudeTeknik("");
+      setEtudeTeknikNo("");
+      setEtudeTeknikStatus("");
+      setEtudeMelodi("");
+      setEtudeMelodiNo("");
+      setEtudeMelodiStatus("");
+      setPolifonik("");
+      setPolifonikNo("");
+      setPolifonikStatus("");
+      setSonata("");
+      setSonataStatus("");
+      setPiecesJudul("");
+      setPiecesStatus("");
     } catch (err: any) {
       showToast("Terjadi kesalahan saat menyimpan jurnal: " + err.message, "error");
     } finally {
@@ -437,7 +439,6 @@ export default function Home() {
           handleSavePassword={handleSavePassword}
           submitting={submitting}
         />
-        {/* Floating Modern Toast */}
         {toast && (
           <div className="fixed bottom-6 right-6 z-50 animate-slideUp">
             <div className={`flex items-center space-x-3 px-4 py-3 rounded-2xl shadow-xl border backdrop-blur-md ${toast.type === "success" ? "bg-slate-900/90 text-white border-slate-700" : "bg-rose-950/90 text-rose-100 border-rose-800"}`}>
@@ -456,10 +457,10 @@ export default function Home() {
   const currentGuruNip = currentGuruObj?.nip || "-";
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row font-sans bg-slate-100 text-slate-900 relative">
-      <div className="md:hidden p-4 flex items-center justify-between bg-slate-900 text-white shadow-md">
+    <div className="min-h-screen flex flex-col md:flex-row font-sans bg-slate-100 text-slate-900 relative overflow-x-hidden">
+      <div className="md:hidden p-4 flex items-center justify-between bg-slate-900 text-white shadow-md w-full sticky top-0 z-50">
         <span className="font-semibold text-sm">Piano SMKN 2 Kasihan</span>
-        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1 rounded-lg text-slate-300 hover:bg-slate-800">
+        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1 rounded-lg text-slate-300 hover:bg-slate-800 focus:outline-none">
           {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
@@ -474,13 +475,13 @@ export default function Home() {
         onLogout={handleLogout}
       />
 
-      <main className="flex-1 md:ml-64 p-4 md:p-8 lg:p-10 w-full">
+      <main className="flex-1 md:ml-64 p-3 sm:p-4 md:p-8 lg:p-10 w-full max-w-full box-border">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32 space-y-3">
             <p className="text-sm font-medium text-slate-500">Memuat data dari Supabase...</p>
           </div>
         ) : (
-          <div className="bg-white rounded-3xl shadow-xl p-6 md:p-10 w-full border border-slate-200/80">
+          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6 md:p-10 w-full max-w-full overflow-hidden border border-slate-200/80 box-border">
             {activeTab === "presensi" && (
               <FormPresensi
                 presensiData={presensiData}
@@ -532,16 +533,10 @@ export default function Home() {
                 setPolifonikStatus={setPolifonikStatus}
                 sonata={sonata}
                 setSonata={setSonata}
-                sonataKomponis={sonataKomponis}
-                setSonataKomponis={setSonataKomponis}
-                sonataMov={sonataMov}
-                setSonataMov={setSonataMov}
                 sonataStatus={sonataStatus}
                 setSonataStatus={setSonataStatus}
                 piecesJudul={piecesJudul}
                 setPiecesJudul={setPiecesJudul}
-                piecesKomponis={piecesKomponis}
-                setPiecesKomponis={setPiecesKomponis}
                 piecesStatus={piecesStatus}
                 setPiecesStatus={setPiecesStatus}
                 submitting={submitting}
