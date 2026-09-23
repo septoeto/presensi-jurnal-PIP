@@ -28,11 +28,8 @@ interface JurnalRow {
   polifonik_no?: string;
   polifonik_status?: string;
   sonata?: string;
-  sonata_komponis?: string;
-  sonata_mov?: string;
   sonata_status?: string;
   pieces_judul?: string;
-  pieces_komponis?: string;
   pieces_status?: string;
 }
 
@@ -90,7 +87,6 @@ export default function RekapJurnal({
     fetchRekapJurnal();
   }, [currentGuru]);
 
-  // Filter daftar siswa sesuai dengan kelas yang dipilih
   const filteredSiswaForDropdown = siswaList.filter((s) => {
     const matchGuru = s.guru?.trim().toLowerCase() === currentGuru?.trim().toLowerCase();
     if (!matchGuru) return false;
@@ -98,7 +94,6 @@ export default function RekapJurnal({
     return s.kelas?.trim() === selectedKelas;
   });
 
-  // Reset pilihan nama siswa ke "Semua" jika kelas diubah
   useEffect(() => {
     setSelectedNamaSiswa("Semua");
   }, [selectedKelas]);
@@ -113,7 +108,6 @@ export default function RekapJurnal({
     return `${d.getFullYear()}-W${String(weekNo).padStart(2, '0')}`;
   };
 
-  // Filter data jurnal berdasarkan Mode Waktu, Kelas, dan Nama Siswa
   const filteredJurnalList = jurnalList.filter((item) => {
     const matchKelas = selectedKelas === "Semua" || item.kelas?.trim() === selectedKelas;
     if (!matchKelas) return false;
@@ -223,7 +217,7 @@ export default function RekapJurnal({
         </div>
       </div>
 
-      {/* AREA CETAK PDF (Ringkas & Efisien) */}
+      {/* AREA TABEL REKAP (Kolom Dipisah Per Materi) */}
       <div className="print:p-0 bg-transparent">
         {/* Kop Surat Resmi */}
         <div className="hidden print:block text-center pb-3 mb-4 border-b-2 border-slate-900 font-sans">
@@ -250,39 +244,85 @@ export default function RekapJurnal({
           </div>
         ) : (
           <div className="overflow-x-auto rounded-2xl border border-slate-200 print:border-none print:rounded-none shadow-2xs">
-            <table className="w-full text-left border-collapse text-xs print:text-[10px]">
+            <table className="w-full text-left border-collapse text-xs print:text-[8px]">
               <thead>
                 <tr className="bg-slate-50 print:bg-slate-100 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-200 text-center">
-                  <th className="p-2.5 border border-slate-200 w-10">No</th>
-                  <th className="p-2.5 border border-slate-200 w-24">Tanggal</th>
-                  <th className="p-2.5 border border-slate-200 text-left">Nama Siswa / Kelas</th>
-                  <th className="p-2.5 border border-slate-200 text-left">Tangganada & Etude Teknik</th>
-                  <th className="p-2.5 border border-slate-200 text-left">Polifonik & Sonata</th>
-                  <th className="p-2.5 border border-slate-200 text-left">Repertoire / Pieces</th>
+                  <th className="p-2 border border-slate-200 w-8">No</th>
+                  <th className="p-2 border border-slate-200 w-20">Tanggal</th>
+                  <th className="p-2 border border-slate-200 text-left w-28">Nama Siswa / Kelas</th>
+                  <th className="p-2 border border-slate-200 text-left">Tangga Nada</th>
+                  <th className="p-2 border border-slate-200 text-left">Etude Teknik</th>
+                  <th className="p-2 border border-slate-200 text-left">Etude Melodi</th>
+                  <th className="p-2 border border-slate-200 text-left">Polifonik</th>
+                  <th className="p-2 border border-slate-200 text-left">Sonata / Sonatina</th>
+                  <th className="p-2 border border-slate-200 text-left">Repertoire / Pieces</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 print:divide-slate-200 font-medium text-slate-700">
                 {filteredJurnalList.map((item, idx) => (
                   <tr key={idx} className="hover:bg-slate-50/50 print:hover:bg-transparent transition align-top">
-                    <td className="p-2.5 border border-slate-200 text-center text-slate-500">{idx + 1}</td>
-                    <td className="p-2.5 border border-slate-200 text-center font-semibold text-slate-900">{item.tanggal}</td>
-                    <td className="p-2.5 border border-slate-200">
+                    <td className="p-2 border border-slate-200 text-center text-slate-500">{idx + 1}</td>
+                    <td className="p-2 border border-slate-200 text-center font-semibold text-slate-900">{item.tanggal}</td>
+                    <td className="p-2 border border-slate-200">
                       <p className="font-bold text-slate-900">{item.nama_siswa}</p>
-                      <p className="text-[10px] text-slate-500">Kelas {item.kelas} • {item.instrument}</p>
+                      <p className="text-[9px] text-slate-500">Kelas {item.kelas}</p>
                     </td>
-                    <td className="p-2.5 border border-slate-200 space-y-0.5">
-                      {item.tangganada && <p><span className="font-semibold text-slate-900">Skala:</span> {item.tangganada} ({item.tangganada_status || "-"})</p>}
-                      {item.etude_teknik && <p><span className="font-semibold text-slate-900">Teknik:</span> {item.etude_teknik} No.{item.etude_teknik_no} ({item.etude_teknik_status || "-"})</p>}
-                      {!item.tangganada && !item.etude_teknik && <span className="text-slate-400 italic">-</span>}
+                    <td className="p-2 border border-slate-200">
+                      {item.tangganada && item.tangganada !== "-" ? (
+                        <>
+                          <p className="font-semibold text-slate-900">{item.tangganada}</p>
+                          <p className="text-[8px] text-slate-500">{item.tangganada_status}</p>
+                        </>
+                      ) : (
+                        <span className="text-slate-400 italic">-</span>
+                      )}
                     </td>
-                    <td className="p-2.5 border border-slate-200 space-y-0.5">
-                      {item.polifonik && <p><span className="font-semibold text-slate-900">Polifonik:</span> {item.polifonik} {item.polifonik_no} ({item.polifonik_status || "-"})</p>}
-                      {item.sonata && <p><span className="font-semibold text-slate-900">Sonata:</span> {item.sonata} - {item.sonata_komponis} ({item.sonata_status || "-"})</p>}
-                      {!item.polifonik && !item.sonata && <span className="text-slate-400 italic">-</span>}
+                    <td className="p-2 border border-slate-200">
+                      {item.etude_teknik && item.etude_teknik !== "-" ? (
+                        <>
+                          <p className="font-semibold text-slate-900">{item.etude_teknik} {item.etude_teknik_no ? `No.${item.etude_teknik_no}` : ""}</p>
+                          <p className="text-[8px] text-slate-500">{item.etude_teknik_status}</p>
+                        </>
+                      ) : (
+                        <span className="text-slate-400 italic">-</span>
+                      )}
                     </td>
-                    <td className="p-2.5 border border-slate-200">
-                      {item.pieces_judul ? (
-                        <p><span className="font-semibold text-slate-900">{item.pieces_judul}</span> ({item.pieces_komponis}) - <span className="text-slate-600">{item.pieces_status || "-"}</span></p>
+                    <td className="p-2 border border-slate-200">
+                      {item.etude_melodi && item.etude_melodi !== "-" ? (
+                        <>
+                          <p className="font-semibold text-slate-900">{item.etude_melodi} {item.etude_melodi_no ? `No.${item.etude_melodi_no}` : ""}</p>
+                          <p className="text-[8px] text-slate-500">{item.etude_melodi_status}</p>
+                        </>
+                      ) : (
+                        <span className="text-slate-400 italic">-</span>
+                      )}
+                    </td>
+                    <td className="p-2 border border-slate-200">
+                      {item.polifonik && item.polifonik !== "-" ? (
+                        <>
+                          <p className="font-semibold text-slate-900">{item.polifonik} {item.polifonik_no}</p>
+                          <p className="text-[8px] text-slate-500">{item.polifonik_status}</p>
+                        </>
+                      ) : (
+                        <span className="text-slate-400 italic">-</span>
+                      )}
+                    </td>
+                    <td className="p-2 border border-slate-200">
+                      {item.sonata && item.sonata !== "-" ? (
+                        <>
+                          <p className="font-semibold text-slate-900">{item.sonata}</p>
+                          <p className="text-[8px] text-slate-500">{item.sonata_status}</p>
+                        </>
+                      ) : (
+                        <span className="text-slate-400 italic">-</span>
+                      )}
+                    </td>
+                    <td className="p-2 border border-slate-200">
+                      {item.pieces_judul && item.pieces_judul !== "-" ? (
+                        <>
+                          <p className="font-semibold text-slate-900">{item.pieces_judul}</p>
+                          <p className="text-[8px] text-slate-500">{item.pieces_status}</p>
+                        </>
                       ) : (
                         <span className="text-slate-400 italic">-</span>
                       )}
@@ -294,7 +334,7 @@ export default function RekapJurnal({
           </div>
         )}
 
-        {/* Tanda Tangan Ringkas */}
+        {/* Tanda Tangan Resmi */}
         <div className="hidden print:flex justify-between items-start mt-8 pt-2 px-8 text-[10px] font-sans page-break-inside-avoid">
           <div className="text-center">
             <p className="mb-1">Mengetahui,</p>
