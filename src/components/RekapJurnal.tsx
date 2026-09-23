@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BookOpen, Loader2, Printer } from "lucide-react";
+import { BookOpen, Loader2, Printer, Share2 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 
 interface Siswa {
@@ -128,6 +128,32 @@ export default function RekapJurnal({
     window.print();
   };
 
+  // Fungsi Kirim / Share Rekap ke WhatsApp Siswa
+  const handleShareWhatsApp = (item: JurnalRow) => {
+    const text = `*REKAP JURNAL PRAKTIK PIANO*
+SMKN 2 Kasihan
+
+📅 *Tanggal:* ${item.tanggal}
+👤 *Nama Siswa:* ${item.nama_siswa}
+🏫 *Kelas:* ${item.kelas}
+🎹 *Instrumen:* ${item.instrument || "Piano"}
+👨‍🏫 *Guru Pengampu:* ${currentGuru}
+
+---
+*PERKEMBANGAN MATERI:*
+1️⃣ *Tangga Nada:* ${item.tangganada || "-"} (${item.tangganada_status || "-"})
+2️⃣ *Etude Teknik:* ${item.etude_teknik || "-"} ${item.etude_teknik_no ? `No.${item.etude_teknik_no}` : ""} (${item.etude_teknik_status || "-"})
+3️⃣ *Etude Melodi:* ${item.etude_melodi || "-"} ${item.etude_melodi_no ? `No.${item.etude_melodi_no}` : ""} (${item.etude_melodi_status || "-"})
+4️⃣ *Polifonik:* ${item.polifonik || "-"} ${item.polifonik_no || ""} (${item.polifonik_status || "-"})
+5️⃣ *Sonata/Sonatina:* ${item.sonata || "-"} (${item.sonata_status || "-"})
+6️⃣ *Repertoire/Pieces:* ${item.pieces_judul || "-"} (${item.pieces_status || "-"})
+---
+_Pesan otomatis dari Sistem Jurnal Praktik Piano SMKN 2 Kasihan._`;
+
+    const encodedText = encodeURIComponent(text);
+    window.open(`https://api.whatsapp.com/send?text=${encodedText}`, "_blank");
+  };
+
   return (
     <div className="space-y-6">
       {/* Tombol & Filter (Disembunyikan saat dicetak) */}
@@ -217,7 +243,7 @@ export default function RekapJurnal({
         </div>
       </div>
 
-      {/* AREA TABEL REKAP (Kolom Dipisah Per Materi) */}
+      {/* AREA TABEL REKAP */}
       <div className="print:p-0 bg-transparent">
         {/* Kop Surat Resmi */}
         <div className="hidden print:block text-center pb-3 mb-4 border-b-2 border-slate-900 font-sans">
@@ -256,6 +282,7 @@ export default function RekapJurnal({
                   <th className="p-2 border border-slate-200 text-left">Polifonik</th>
                   <th className="p-2 border border-slate-200 text-left">Sonata / Sonatina</th>
                   <th className="p-2 border border-slate-200 text-left">Repertoire / Pieces</th>
+                  <th className="p-2 border border-slate-200 text-center print:hidden w-20">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 print:divide-slate-200 font-medium text-slate-700">
@@ -326,6 +353,17 @@ export default function RekapJurnal({
                       ) : (
                         <span className="text-slate-400 italic">-</span>
                       )}
+                    </td>
+                    <td className="p-2 border border-slate-200 text-center print:hidden">
+                      <button
+                        type="button"
+                        onClick={() => handleShareWhatsApp(item)}
+                        title="Kirim Rekap ke WhatsApp Siswa"
+                        className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 p-1.5 rounded-lg transition inline-flex items-center space-x-1 text-[10px] font-semibold"
+                      >
+                        <Share2 className="w-3.5 h-3.5" />
+                        <span>WA</span>
+                      </button>
                     </td>
                   </tr>
                 ))}
